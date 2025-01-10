@@ -1,12 +1,16 @@
 import mongoose, { model, Schema } from "mongoose";
 import { DB_URL } from "./config";
+import passportLocalMongoose from "passport-local-mongoose";
 
 mongoose.connect(DB_URL);
 
 const UserSchema = new Schema({
-  username: { type: String, unique: true },
-  password: String,
+  email : {
+    type : String,
+    required : true
+}
 });
+UserSchema.plugin(passportLocalMongoose);
 
 const ContentSchema = new mongoose.Schema({
   title: String,
