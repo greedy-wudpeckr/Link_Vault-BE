@@ -1,5 +1,5 @@
 import express from "express";
-import { ContentModel, LinkModel, UserModel } from "./db";
+import { ContentModel, UserModel } from "./db";
 import isLoggedIn from "./middleware";
 import cors from "cors";
 import session from "express-session";
@@ -125,14 +125,10 @@ app.delete("/api/v1/content", isLoggedIn , async (req, res) => {
   try {
     const result = await ContentModel.findByIdAndDelete({
       _id: contentId,
-      // Ensure this is scoped to the authenticated user
-      // @ts-ignore
+
+      //@ts-ignore
       userId: req.userId,
     });
-
-    // if (result.deletedCount === 0) {
-    //   return res.status(404).json({ error: "Content not found or not authorized" });
-    // }
 
     res.json({ message: "Deleted" });
   } catch (error) {
@@ -141,89 +137,6 @@ app.delete("/api/v1/content", isLoggedIn , async (req, res) => {
   }
 });
 
-// @ts-ignore
-
-// app.post("/api/v1/brain/share", userMiddleware, async (req, res) => {
-//   const share = req.body.share;
-
-//   try {
-//     // Check if share is enabled
-//     if (share) {
-//       // Check if the user already has a link
-//       const existingLink = await LinkModel.findOne({
-//         //@ts-ignore
-//         userId: req.userId, // User ID from middleware
-//       });
-
-//       if (existingLink) {
-//         // Link already exists
-//         return res.status(200).json({
-//           message: `/share/${existingLink.Hash}`,
-//         });
-//       } else {
-//         // Generate a new unique hash
-//         const hash = random(10);
-//         const isUnique = await LinkModel.countDocuments({ Hash: hash }) === 0;
-
-//         if (!isUnique) {
-//           return res.status(500).json({ error: "Hash collision. Try again." });
-//         }
-
-//         // Save the new link
-//         await LinkModel.create({
-//           Hash: hash,
-//           //@ts-ignore
-//           userId: req.userId,
-//         });
-
-//         return res.status(200).json({
-//           message: `/share/${hash}`,
-//         });
-//       }
-//     } else {
-//       // If share is disabled, remove the link
-//       await LinkModel.deleteOne({
-//         //@ts-ignore
-//         userId: req.userId,
-//       });
-
-//       return res.status(200).json({
-//         message: "Link removed",
-//       });
-//     }
-//   } catch (error) {
-//     console.error("Error in brain share logic:", error);
-
-//     return res.status(500).json({
-//       error: "An error occurred while processing your request. Please try again.",
-//     });
-//   }
-// });
-
-// app.get("/api/v1/brain/share/:shareLink", async (req, res) => {
-//   const shareLink = req.params.shareLink;
-
-//   const link = await LinkModel.findOne({
-//     Hash: shareLink,
-//   });
-
-//   if (link) {
-//     const content = await ContentModel.find({
-//       userId: link.userId,
-//     });
-
-//     const user = await UserModel.findById(link.userId);
-
-//     res.json({
-//       username: user?.username,
-//       content,
-//     });
-//   } else {
-//     res.status(411).json({
-//       message: "Link is incorrect or expired",
-//     });
-//   }
-// });
 
 app.get('/api/v1/user', (req, res) => {
   if (req.isAuthenticated()) {
