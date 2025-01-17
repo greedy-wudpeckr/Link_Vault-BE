@@ -4,7 +4,13 @@ import 'dotenv/config'
 import passportLocalMongoose from "passport-local-mongoose";
 
 //@ts-ignore
-mongoose.connect(process.env.MONGO_URL);
+mongoose.connect(process.env.MONGO_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  tls: true, // Explicitly enable TLS
+  tlsAllowInvalidCertificates: false, // Reject invalid certificates
+});
+
 
 const UserSchema = new Schema({
   email : {
