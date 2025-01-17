@@ -1,9 +1,10 @@
 import mongoose, { model, Schema } from "mongoose";
+import 'dotenv/config'
 
 import passportLocalMongoose from "passport-local-mongoose";
 
 //@ts-ignore
-mongoose.connect("mongodb+srv://mudit:gglmaooo@cluster0.umyoj.mongodb.net/your_database?retryWrites=true&w=majority&tls=true&appName=Cluster0");
+mongoose.connect(process.env.MONGO_URL);
 
 
 const UserSchema = new Schema({
