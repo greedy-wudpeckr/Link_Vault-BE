@@ -1,8 +1,10 @@
 import mongoose, { model, Schema } from "mongoose";
-import { DB_URL } from "./config";
+import 'dotenv/config'
+
 import passportLocalMongoose from "passport-local-mongoose";
 
-mongoose.connect(DB_URL);
+//@ts-ignore
+mongoose.connect(process.env.MONGO_URL);
 
 const UserSchema = new Schema({
   email : {
