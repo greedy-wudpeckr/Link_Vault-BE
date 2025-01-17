@@ -1,15 +1,9 @@
 import mongoose, { model, Schema } from "mongoose";
-import 'dotenv/config'
 
 import passportLocalMongoose from "passport-local-mongoose";
 
 //@ts-ignore
-mongoose.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  tls: true, // Explicitly enable TLS
-  tlsAllowInvalidCertificates: false, // Reject invalid certificates
-});
+mongoose.connect("mongodb+srv://mudit:gglmaooo@cluster0.umyoj.mongodb.net/your_database?retryWrites=true&w=majority&tls=true&appName=Cluster0");
 
 
 const UserSchema = new Schema({
