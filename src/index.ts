@@ -1,16 +1,11 @@
 import express from "express";
-import jwt from "jsonwebtoken";
 import { ContentModel, LinkModel, UserModel } from "./db";
-import { JWT_SECRET } from "./config";
-// import { userMiddleware } from "./middleware";
 import isLoggedIn from "./middleware";
-import { random } from "./utils";
 import cors from "cors";
 import session from "express-session";
 import passport from "passport";
 import { wrapAsync } from "./utils";
 import LocalStrategy from "passport-local";
-
 
 
 const app = express();
@@ -95,7 +90,7 @@ app.post("/api/v1/content", isLoggedIn , async (req, res) => {
     type,
     title: req.body.title,
     //@ts-ignore
-    userId: req.userId,
+    userId: req.user._id,
     tags: [],
   });
 
@@ -104,9 +99,9 @@ app.post("/api/v1/content", isLoggedIn , async (req, res) => {
   });
 });
 
-app.get("/api/v1/content" , async (req, res) => {
+app.get("/api/v1/content" ,isLoggedIn, async (req, res) => {
   // @ts-ignore
-  const userId = req.userId;
+  const userId = req.user._id;
   const content = await ContentModel.find({
     userId: userId,
   }).populate("userId", "username");
@@ -121,23 +116,23 @@ app.delete("/api/v1/content", isLoggedIn , async (req, res) => {
   const contentId = req.body.contentId;
   console.log("contentId", contentId);
   // @ts-ignore
-  console.log("req.userId", req.userId);
+  console.log("req.userId", req.body.userId);
 
   if (!contentId) {
     return res.status(400).json({ error: "Content ID is required" });
   }
 
   try {
-    const result = await ContentModel.deleteOne({
-      link: contentId,
+    const result = await ContentModel.findByIdAndDelete({
+      _id: contentId,
       // Ensure this is scoped to the authenticated user
       // @ts-ignore
       userId: req.userId,
     });
 
-    if (result.deletedCount === 0) {
-      return res.status(404).json({ error: "Content not found or not authorized" });
-    }
+    // if (result.deletedCount === 0) {
+    //   return res.status(404).json({ error: "Content not found or not authorized" });
+    // }
 
     res.json({ message: "Deleted" });
   } catch (error) {
@@ -229,6 +224,31 @@ app.delete("/api/v1/content", isLoggedIn , async (req, res) => {
 //     });
 //   }
 // });
+
+app.get('/api/v1/user', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json(req.user); // Send user details
+  } else {
+    res.status(401).json({ message: 'Unauthorized' });
+  }
+});
+
+app.delete("/delete",async(req,res)=>{
+    const resp = await ContentModel.findByIdAndDelete({});
+    console.log(resp);
+})
+
+
+app.get("/logout", (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    console.log("Logout Success");
+    res.sendStatus(200); // Send a success status to the client
+  });
+});
+  
 
 app.listen(3000,()=>{
   console.log("Server is running on port 3000")
