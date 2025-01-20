@@ -21,8 +21,9 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: false,
   cookie: {
+    sameSite: 'none',
     httpOnly: true,
-    secure: false, // Set to true if using HTTPS
+    secure: true, // Set to true if using HTTPS
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   },
 };
