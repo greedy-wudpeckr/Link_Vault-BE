@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: "*", // Replace with your frontend URL
-    credentials: true, // Allow cookies to be sent
+    // credentials: true, // Allow cookies to be sent
   })
 );
 const sessionOptions = {
