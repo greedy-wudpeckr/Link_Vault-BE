@@ -12,8 +12,8 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "*", // Replace with your frontend URL
-    // credentials: true, // Allow cookies to be sent
+    origin: "http://localhost:5173", // Replace with your frontend URL
+    credentials: true, // Allow cookies to be sent
   })
 );
 const sessionOptions = {
@@ -45,22 +45,29 @@ passport.deserializeUser(UserModel.deserializeUser());
 
 //------------------------------------------------------------------
 
-app.post("/api/v1/signup",
-  wrapAsync(async(req : any ,res : any)=>{
-      try{ let {username , email , password } = req.body;
-      const newUser = new UserModel({email , username});
-     const regtUser =  await UserModel.register(newUser , password);
-      console.log(regtUser);
-      res.json({
-        message : "user was registered"
-      });}
-      catch(e : any){
-          res.json({
-            message : e.message
-          });
-      }
-     
-  }));
+app.post("/api/v1/signup", wrapAsync(async (req: any, res: any) => {
+  try {
+      let { username, email, password } = req.body;
+      const newUser = new UserModel({ email, username });
+      const regtUser = await UserModel.register(newUser, password);
+
+      // Log the user in after registration
+      req.logIn(regtUser, (err: any) => {
+          if (err) {
+              return res.status(500).json({ msg: "Error logging in" });
+          }
+          // Only send the response here after login is successful
+          return res.json({ msg: "Welcome! You are logged in!" });
+      });
+
+  } catch (e: any) {
+      // Handle error
+      return res.status(400).json({
+          message: e.message
+      });
+  }
+}));
+
 
   app.post("/api/v1/signin", (req, res, next) => {
     console.log("Request received at login:", req.body);
@@ -146,11 +153,6 @@ app.get('/api/v1/user', (req, res) => {
   }
 });
 
-app.delete("/delete",async(req,res)=>{
-    const resp = await ContentModel.findByIdAndDelete({});
-    console.log(resp);
-})
-
 
 app.get("/logout", (req, res, next) => {
   req.logout((err) => {
@@ -167,11 +169,8 @@ app.listen(3000,()=>{
   console.log("Server is running on port 3000")
 });
 
-app.get("/mdb",(req ,res)=>{
-  res.json({
-    msg : process.env.MONGO_URL
-  });
-})
+
+
 
 
 

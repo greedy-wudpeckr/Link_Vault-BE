@@ -4,7 +4,15 @@ import 'dotenv/config'
 import passportLocalMongoose from "passport-local-mongoose";
 
 //@ts-ignore
-mongoose.connect(process.env.MONGO_URL);
+
+try {
+  //@ts-ignore
+   mongoose.connect(process.env.MONGO_URL);
+  console.log("DataBase Connected")
+} catch (err) {
+  console.log("error found" , err);
+}
+
 
 
 const UserSchema = new Schema({
