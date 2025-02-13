@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(
   cors({
     // origin : "http://localhost:5173",
-    origin: "https://li-v1.vercel.app/", // Replace with your frontend URL
+    origin: "https://li-v1.vercel.app", // Replace with your frontend URL
     credentials: true, // Allow cookies to be sent
   })
 );
