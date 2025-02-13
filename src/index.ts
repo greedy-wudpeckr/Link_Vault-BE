@@ -12,7 +12,8 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://link-vault-fe.vercel.app", // Replace with your frontend URL
+    // origin : "http://localhost:5173",
+    origin: "https://li-v1.vercel.app/", // Replace with your frontend URL
     credentials: true, // Allow cookies to be sent
   })
 );
@@ -21,9 +22,9 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: false,
   cookie: {
-    sameSite: 'none',
+    // sameSite: 'none',
     httpOnly: true,
-    secure: true, // Set to true if using HTTPS
+    secure: false, // Set to true if using HTTPS
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   },
 };
